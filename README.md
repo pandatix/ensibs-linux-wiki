@@ -1,3 +1,5 @@
+# WIKI SECU LINUX
+
 # Configuration minimale
 ## Configuration de PAM
 
@@ -35,7 +37,7 @@ Les administrateurs doivent posséder leur propre compte utilisateur dédié afi
 
 ## Journalisation et archivage
 
-###1) Syslog
+### 1) Syslog
 
 Appliquer une configuration sécurisée au serveur syslog, on suivra, par exemple, les recommandations de l'ANSSI à ce propos : https://www.ssi.gouv.fr/journalisation.
 
@@ -43,13 +45,13 @@ Cloisonner le service syslog dans un environnement chroot : il faut bien penser 
 
 Utiliser une partition séparée du reste du système : le volume des journaux à traiter peut être difficile à évaluer en amont, il vaut donc mieux isoler les journaux du reste des volumes sur une partition dédiée afin d’éviter que le remplissage d’une partition ne puisse entraver la gestion des journaux ou qu'une saturation due aux journaux bloque le système.
 
-###2) Auditd
+### 2) Auditd
 
 auditd est un service de journalisation qui permet d’enregistrer des opérations système spécifiques, voire d’alerter un administrateur lorsque des opérations privilégiées non prévues ont lieu, le fonctionnement du service dépend entièrement de son fichier de configuration :
 
 *png exemple*
 
-###3) Surveillance du système de fichiers : AIDE
+### 3) Surveillance du système de fichiers : AIDE
 
 AIDE est un logiciel open source qui aide l'administrateur à controler l'évolution du système de fichiers un « instantané » de l'état du système (sans les fichieres temporaires), enregistre les fragmentations, les moments liés à des modifications et toute autre donnée concernant les fichiers définis par l'administrateur. Cet « instantané » est utilisé pour générer une base de données qui est enregistrée qui va servir de base de comparaison.
 
