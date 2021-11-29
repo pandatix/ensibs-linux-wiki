@@ -1,4 +1,6 @@
-# WIKI SECU LINUX
+# WIKI SECU LINUX	
+Ce rapport présente certaines mesures de sécurité Linux Debian à appliquer, les mesures de sécurité sont divisées en différentes configurations : minimale, recommandée et renforcée.
+Toutes les sources sont disponibles en fin de rapport
 
 # Configuration minimale
 ## Configuration de PAM
@@ -79,3 +81,8 @@ Inconvénient : cette modification peut être écrasée par les scripts d'instal
 ## chroot systématique de tous les services
 
 ## Ecriture de scripts d'audit spécialisés
+
+# Sources
+
+https://www.debian.org/doc/manuals/securing-debian-manual/index.en.html
+https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
