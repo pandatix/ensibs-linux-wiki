@@ -49,7 +49,7 @@ Utiliser une partition séparée du reste du système : le volume des journaux �
 
 auditd est un service de journalisation qui permet d’enregistrer des opérations système spécifiques, voire d’alerter un administrateur lorsque des opérations privilégiées non prévues ont lieu, le fonctionnement du service dépend entièrement de son fichier de configuration :
 
-*png exemple*
+![Exemple de configuration auditd](../images/auditd.png)
 
 ### 3) Surveillance du système de fichiers : AIDE
 
