@@ -25,7 +25,20 @@ Le compte root ne doit pas être utilisé pour toutes les actions d'administrati
 Les administrateurs doivent posséder leur propre compte utilisateur dédié afin de ne pas utiliser leurs comptes à privilèges quand il y n'en ont pas le besoin.
 -> protocole de création de compte
 
-## Limiter les services réseau
+## Limiter les services au minimum requis
+
+Une bonne façon de protéger son système contre les vulnérabilités est de désactiver tous les services non nécessaires au fonctionnement visé du système.
+Désactiver un service temporairement : sudo systemctl stop [service]
+Supprimer un service : sudo rm /etc/systemd/system/[service]
+
+Liste non exhaustive des services pouvant être désactivés/supprimés car inutiles sur un serveur :
+1. (Serveur non NFS) Services RPC : portmap, rpc.statd, rpcbind...
+2. Service facilitant le partage des imprimantes, fichiers et autres : avahi 
+3. Système de fenêtrage qui gère l'écran, la souris et le clavier : xorg
+4. Services inetd : xinetd, openbsd-inetd
+5. Services réseaux peu communs : DCCP, SCTP, RDS, TIPC...
+6. etc...
+
 
 ## Protocoles de mise à jour
 
@@ -86,3 +99,5 @@ Inconvénient : cette modification peut être écrasée par les scripts d'instal
 
 https://www.debian.org/doc/manuals/securing-debian-manual/index.en.html
 https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
+https://www.debian.org/doc/manuals/securing-debian-manual/rpc.en.html
+https://tldp.org/HOWTO/Security-Quickstart-HOWTO/services.html
