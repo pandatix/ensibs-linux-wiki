@@ -2,6 +2,15 @@
 Ce rapport présente certaines mesures de sécurité Linux Debian à appliquer, les mesures de sécurité sont divisées en différentes configurations : minimale, recommandée et renforcée.
 Toutes les sources sont disponibles en fin de rapport
 
+# Audit et analyse de la sécurité du système
+
+De nombreux outils sont disponibles afin d'évaluer le niveau de sécurité et de protection d'un système, ces outils analysent les applications et services installés puis en déduisent une liste d'améliorations possibles, et annoncent le niveau de maturité du système audité.
+
+Sous Debian, les outils suivants peuvent être utilisés :
+1. Debsecan : apt-get install $(debsecan --suite NOM_SUITE --only-fixed --format packages) puis debsecan --suite $(lsb_release --codename --short) --only-fixed --format detail
+2. Lynis : apt update && apt install lynis. On lance l'audit via la commande lynis audit system. Le rapport est enregistré sous : /var/log/lynis-report.dat (Guide d'utilisation : https://opensource.com/article/20/5/linux-security-lynis)
+
+
 # Configuration minimale
 ## Configuration de PAM
 
@@ -41,6 +50,16 @@ Liste non exhaustive des services pouvant être désactivés/supprimés car inut
 
 
 ## Protocoles de mise à jour
+
+Il est recommandé d’avoir une procédure de mise à jour de sécurité régulière et réactive pour le système et l'ensemble des packages installés.
+Téléchargement et installation des packages : apt-get update && apt-get upgrade
+
+## Choix des mots de passe
+
+Pour le choix des mots de passe, l'utilisation d'un générateur de mots de passe est recommandé, surtout pour les comptes à privilège.
+Sous Linux, l'outil Pwgen peut être utiliser pour générer des mots de passe. D'autres outils existent aussi en ligne.
+
+Paramètres de l'outil Pwgen : http://pwet.fr/man/linux/commandes/pwgen/
 
 # Configuration intermédiaire
 
@@ -101,3 +120,6 @@ https://www.debian.org/doc/manuals/securing-debian-manual/index.en.html
 https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
 https://www.debian.org/doc/manuals/securing-debian-manual/rpc.en.html
 https://tldp.org/HOWTO/Security-Quickstart-HOWTO/services.html
+https://www.cert.ssi.gouv.fr/
+http://pwet.fr/man/linux/commandes/pwgen/
+https://opensource.com/article/20/5/linux-security-lynis 
