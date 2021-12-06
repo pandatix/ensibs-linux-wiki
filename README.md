@@ -27,6 +27,78 @@ Les fichiers de configuration des modules PAM se situent dans /etc/pam.d/
 
 ## Sécurisation de SSH
 
+### Cryptographie
+
+### Durcissement
+
+Le service sshd est très souvent exécuté par l'utilisateur root car il nécessite certains privilèges. Il convient donc d'en durcir le code en vue de retarder voire d'empêcher sa compromission.
+
+La séparation de privilèges permet de limiter les impacts d’une faille en cherchant à respecter le
+principe de moindre privilège : le serveur va réduire ses droits au strict nécessaire. Ainsi, il peut être pertinent de set le `UsePrivilegeSeparation` de `sandbox` à `yes`.
+
+#### Paramètres de sécurité
+
+##### L'utilisation X11Forwarding
+
+Le retour SSH sur le client peut être davantage exposé à une attaque lorsque le trafic X11 est transféré. Si la redirection du trafic X11 n'est pas nécessaire, désactivez-la :
+
+> X11Forwarding no
+
+Pourquoi désactiver X11Forwarding est si important : le protocole X11 n'a jamais été conçu dans un souci de sécurité. Comme il ouvre un canal de retour vers le client, le serveur pourrait renvoyer des commandes malveillantes au client. Pour protéger les clients, désactivez X11Forwarding lorsqu'il n'est pas nécessaire.
+
+##### Désactiver rhosts
+
+Bien qu'elle ne soit plus courante, la méthode rhosts était une méthode faible d'authentification des systèmes. Elle définit un moyen de faire confiance à un autre système simplement par son adresse IP. Par défaut, l'utilisation de rhosts est déjà désactivée. Assurez-vous de vérifier si elle l'est vraiment.
+
+> IgnoreRhosts yes
+
+#####  Vérification du nom d'hôte DNS
+
+Par défaut, le serveur SSH peut vérifier si le client qui se connecte renvoie à la même combinaison de nom d'hôte et d'adresse IP. Utilisez l'option UseDNS pour effectuer cette vérification de base comme garantie supplémentaire.
+
+> UseDNS yes
+
+Remarque : cette option peut ne pas fonctionner correctement dans toutes les situations. Elle peut entraîner un délai supplémentaire, car le démon attend un délai d'attente lors de la connexion au serveur DNS. N'utilisez cette option que si vous êtes sûr que votre DNS interne est correctement configuré.
+
+##### Désactiver les mots de passe vides
+
+Les comptes doivent être protégés et les utilisateurs doivent être responsables. Pour cette raison, l'utilisation de mots de passe vides ne doit pas être autorisée. Ceci peut être désactivé avec l'option PermitEmptyPasswords, qui est la valeur par défaut.
+
+> PermitEmptyPasswords no
+
+
+##### Tentatives d'authentification maximales
+
+Pour se protéger contre les attaques par force brute sur le mot de passe d'un utilisateur, limitez le nombre de tentatives. Cela peut être fait avec le paramètre MaxAuthTries.
+
+> MaxAuthTries 3
+
+##### Déscativer l'authentication root
+
+La meilleure pratique consiste à ne pas se connecter en tant qu'utilisateur root. Utilisez plutôt un compte utilisateur normal pour initier votre connexion, ainsi que sudo. Les connexions directes de l'utilisateur root peuvent entraîner une mauvaise comptabilisation des actions effectuées par ce compte utilisateur.
+
+> PermitRootLogin no
+
+Les versions plus récentes d'OpenSSH supportent également la valeur `without-password`. Cette valeur fait référence à des méthodes telles que l'authentification par clé publique. Si votre installation est fournie avec cette valeur, il n'y a aucune raison de la modifier.
+
+
+##### SSH protocole
+
+Si vous utilisez un système plus ancien, la version 1 du protocole SSH est peut-être encore disponible. Cette version présente des faiblesses et ne devrait plus être utilisée. Depuis la version 7.0 d'OpenSSH, le protocole 1 est automatiquement désactivé lors de la compilation. Si votre version est plus ancienne que cela, appliquez la version du protocole :
+
+> Protocol 2
+
+##### Utilisation de AllowUsers et DenyUsers
+
+Lorsque tous les utilisateurs ne doivent pas avoir accès au système, limitez le nombre de personnes qui peuvent effectivement se connecter. Une façon de procéder consiste à créer un groupe (par exemple, sshusers) et à ajouter des personnes à ce groupe. Ensuite, définissez l'option AllowGroups pour que seuls ces utilisateurs puissent se connecter.
+
+D'autres possibilités consistent à n'autoriser que quelques utilisateurs avec l'option AllowUsers, ou à refuser spécifiquement des utilisateurs et des groupes avec les options DenyUsers ou DenyGroups. Il est généralement préférable d'établir une liste blanche des accès, en utilisant le principe du "refus par défaut". Donc, lorsque cela est possible, utilisez l'option AllowUsers ou AllowGroups.
+
+Bon à savoir : SSH applique l'ordre suivant pour déterminer si une personne peut se connecter : DenyUsers, AllowUsers, DenyGroups, enfin AllowGroups.
+
+### Protocole et accès réseau
+
+
 ## Gestion des mots de passe et comptes dédiés
 
 Mot de passe root : doit répondre aux recommandations sur les mots de passe et doit être unique pour chaque machine
