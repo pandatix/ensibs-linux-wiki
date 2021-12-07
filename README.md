@@ -627,10 +627,12 @@ Bilan de la règle:
 
 #### R51 - Scellement et intégrité des fichiers
 
+Nous utilisons l'outil d'audit AIDE afin de veiller à l'intégrité des fichiers du système, cet outil est présenté dans [présentation de AIDE](docs/aide.md).
+
 Bilan de la règle:
-| Niveau | Règle | État   |
-|--------|-------|--------|
-|    E   | R51   |        |
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|    E   | R51   | Appliqué |
 
 #### R52 - Protection de la base de données des scellés
 
