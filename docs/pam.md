@@ -1,7 +1,9 @@
-# Fonctionnalités de PAM
+# PAM
 
 `PAM` va fournir le service de gestion de comptes, c’est-à-dire permettre l’authentification de l’utilisateur, la création de sa session et éventuellement toute opération qui doit se dérouler lors de la tentative d’accès : création d’environnement, récupération de tickets ou de données, droits d’accès, changement de mot de passe, etc.
-Les fichiers de configuration des modules PAM se situent dans /etc/pam.d/
+Les fichiers de configuration des modules PAM se situent dans `/etc/pam.d/`
+
+Voici une liste dans fonctionnalités offertes par PAM
 
 - Il faut limiter le nombre d'applications utilisant PAM, pour savoir si une application a été écrite pour utiliser PAM on utilise la commande `ldd`. 
 Exemple : 
