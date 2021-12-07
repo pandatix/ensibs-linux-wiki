@@ -780,10 +780,11 @@ Les mesures RE et E n'ont pas été traitées par manque de temps.
 
 #### Sources
 
-https://www.debian.org/doc/manuals/securing-debian-manual/index.en.html
-https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
-https://www.debian.org/doc/manuals/securing-debian-manual/rpc.en.html
-https://tldp.org/HOWTO/Security-Quickstart-HOWTO/services.html
-https://www.cert.ssi.gouv.fr/
-http://pwet.fr/man/linux/commandes/pwgen/
-https://opensource.com/article/20/5/linux-security-lynis 
+https://www.debian.org/doc/manuals/securing-debian-manual/index.en.html<br>
+https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/<br>
+https://www.ssi.gouv.fr/administration/guide/recommandations-pour-un-usage-securise-dopenssh/<br>
+https://www.debian.org/doc/manuals/securing-debian-manual/rpc.en.html<br>
+https://tldp.org/HOWTO/Security-Quickstart-HOWTO/services.html<br>
+https://www.cert.ssi.gouv.fr/<br>
+http://pwet.fr/man/linux/commandes/pwgen/<br>
+https://opensource.com/article/20/5/linux-security-lynis <br>
