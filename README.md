@@ -777,3 +777,13 @@ Bilan de la règle:
 Toutes les mesures MIRE ont été mises en application à une restriction prêt sur R37.
 Les mesures IRE ne sont pas toutes mises en application, certaines sont encore à traiter et on des chances d'avoir déjà des solutions.
 Les mesures RE et E n'ont pas été traitées par manque de temps.
+
+#### Sources
+
+https://www.debian.org/doc/manuals/securing-debian-manual/index.en.html
+https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
+https://www.debian.org/doc/manuals/securing-debian-manual/rpc.en.html
+https://tldp.org/HOWTO/Security-Quickstart-HOWTO/services.html
+https://www.cert.ssi.gouv.fr/
+http://pwet.fr/man/linux/commandes/pwgen/
+https://opensource.com/article/20/5/linux-security-lynis 
