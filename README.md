@@ -671,10 +671,14 @@ Bilan de la règle:
 
 #### R57 - Groupe dédié à l'usage de sudo
 
+sudo est un utilitaire installé lorsqu’il y a un besoin de déléguer des droits et privilèges à différents utilisateurs.
+Afin de pouvoir réaliser cela, sudo est un exécutable setuid root. Il est donc important de se préoccuper de sa sécurité.
+On peut mettre en place un groupe dédié à son usage en suivant cette [documentation groupe dédié sudo](docs/groupesudo.md).
+
 Bilan de la règle:
-| Niveau | Règle | État   |
-|--------|-------|--------|
-|  IRE   | R57   |        |
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R57   | Appliqué |
 
 #### R58 - Directives de configuration sudo
 
