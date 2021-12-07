@@ -41,6 +41,8 @@ Pour faire un instantané, voir [la documentation](docs/snapshot-vbox.md).
 
 ## Audit de l'état du système avant la mise à jour
 
+De nombreux outils sont disponibles afin d'évaluer le niveau de sécurité et de protection d'un système, ces outils analysent les applications et services installés puis en déduisent une liste d'améliorations possibles, et annoncent le niveau de maturité du système audité.
+
 On commence avec [Debescan](docs/debescan.md), et on continuera sur [Lynis](docs/lynis.md).
 
 ## Mise à jour du système
@@ -125,7 +127,7 @@ apt install libpam-tmpdir -y
 exit
 ```
 
-Les diverses configurations se feront par la suite
+Les fonctionnalités apportées par PAM sont présentées [ici](docs/pam.md).
 
 ### Bilan Lynis
 
