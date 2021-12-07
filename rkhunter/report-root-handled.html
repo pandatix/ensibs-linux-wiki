@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+body {background-color: black;}
+pre {
+	font-weight: normal;
+	color: #bbb;
+}
+b {font-weight: normal}
+b.BOLD {color: #fff}
+b.ITA {font-style: italic}
+b.UND {text-decoration: underline}
+b.STR {text-decoration: line-through}
+b.UNDSTR {text-decoration: underline line-through}
+b.BLK {color: #000000}
+b.RED {color: #aa0000}
+b.GRN {color: #00aa00}
+b.YEL {color: #aa5500}
+b.BLU {color: #0000aa}
+b.MAG {color: #aa00aa}
+b.CYN {color: #00aaaa}
+b.WHI {color: #aaaaaa}
+b.HIK {color: #555555}
+b.HIR {color: #ff5555}
+b.HIG {color: #55ff55}
+b.HIY {color: #ffff55}
+b.HIB {color: #5555ff}
+b.HIM {color: #ff55ff}
+b.HIC {color: #55ffff}
+b.HIW {color: #ffffff}
+b.BBLK {background-color: #000000}
+b.BRED {background-color: #aa0000}
+b.BGRN {background-color: #00aa00}
+b.BYEL {background-color: #aa5500}
+b.BBLU {background-color: #0000aa}
+b.BMAG {background-color: #aa00aa}
+b.BCYN {background-color: #00aaaa}
+b.BWHI {background-color: #aaaaaa}
+</style>
+</head>
+<body>
+<pre>[ Rootkit Hunter version 1.4.6 ]
+
+<b class=HIY>Checking system commands...</b>
+
+  Performing 'strings' command checks
+    Checking 'strings' command                               [ <b class=HIG>OK</b> ]
+
+  Performing 'shared libraries' checks
+    Checking for preloading variables                        [ <b class=HIG>None found</b> ]
+    Checking for preloaded libraries                         [ <b class=HIG>None found</b> ]
+    Checking LD_LIBRARY_PATH variable                        [ <b class=HIG>Not found</b> ]
+
+  Performing file properties checks
+    Checking for prerequisites                               [ <b class=HIG>OK</b> ]
+    /usr/bin/awk                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/basename                                        [ <b class=HIG>OK</b> ]
+    /usr/bin/bash                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/cat                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/chattr                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/chmod                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/chown                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/cp                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/curl                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/cut                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/date                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/df                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/diff                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/dirname                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/dmesg                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/dpkg                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/dpkg-query                                      [ <b class=HIG>OK</b> ]
+    /usr/bin/du                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/echo                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/egrep                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/env                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/fgrep                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/file                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/find                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/fuser                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/GET                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/grep                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/groups                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/head                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/id                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/ip                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/ipcs                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/kill                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/killall                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/last                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/lastlog                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/ldd                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/less                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/logger                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/login                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/ls                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/lsattr                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/lsmod                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/lsof                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/mail                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/md5sum                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/mktemp                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/more                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/mount                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/mv                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/netstat                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/newgrp                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/passwd                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/perl                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/pgrep                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/ping                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/pkill                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/ps                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/pstree                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/pwd                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/readlink                                        [ <b class=HIG>OK</b> ]
+    /usr/bin/rkhunter                                        [ <b class=HIG>OK</b> ]
+    /usr/bin/runcon                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/sed                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/sh                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/sha1sum                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/sha224sum                                       [ <b class=HIG>OK</b> ]
+    /usr/bin/sha256sum                                       [ <b class=HIG>OK</b> ]
+    /usr/bin/sha384sum                                       [ <b class=HIG>OK</b> ]
+    /usr/bin/sha512sum                                       [ <b class=HIG>OK</b> ]
+    /usr/bin/size                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/sort                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/ssh                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/stat                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/strings                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/su                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/tail                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/telnet                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/test                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/top                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/touch                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/tr                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/uname                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/uniq                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/users                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/vmstat                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/w                                               [ <b class=HIG>OK</b> ]
+    /usr/bin/watch                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/wc                                              [ <b class=HIG>OK</b> ]
+    /usr/bin/wget                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/whatis                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/whereis                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/which                                           [ <b class=HIG>OK</b> ]
+    /usr/bin/who                                             [ <b class=HIG>OK</b> ]
+    /usr/bin/whoami                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/numfmt                                          [ <b class=HIG>OK</b> ]
+    /usr/bin/mawk                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/lwp-request                                     [ <b class=HIG>OK</b> ]
+    /usr/bin/kmod                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/mail.mailutils                                  [ <b class=HIG>OK</b> ]
+    /usr/bin/dash                                            [ <b class=HIG>OK</b> ]
+    /usr/bin/x86_64-linux-gnu-size                           [ <b class=HIG>OK</b> ]
+    /usr/bin/x86_64-linux-gnu-strings                        [ <b class=HIG>OK</b> ]
+    /usr/bin/telnet.netkit                                   [ <b class=HIG>OK</b> ]
+    /usr/bin/systemd                                         [ <b class=HIG>OK</b> ]
+    /usr/bin/systemctl                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/adduser                                        [ <b class=HIG>OK</b> ]
+    /usr/sbin/chroot                                         [ <b class=HIG>OK</b> ]
+    /usr/sbin/cron                                           [ <b class=HIG>OK</b> ]
+    /usr/sbin/depmod                                         [ <b class=HIG>OK</b> ]
+    /usr/sbin/fsck                                           [ <b class=HIG>OK</b> ]
+    /usr/sbin/groupadd                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/groupdel                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/groupmod                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/grpck                                          [ <b class=HIG>OK</b> ]
+    /usr/sbin/ifconfig                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/ifdown                                         [ <b class=HIG>OK</b> ]
+    /usr/sbin/ifup                                           [ <b class=HIG>OK</b> ]
+    /usr/sbin/init                                           [ <b class=HIG>OK</b> ]
+    /usr/sbin/insmod                                         [ <b class=HIG>OK</b> ]
+    /usr/sbin/ip                                             [ <b class=HIG>OK</b> ]
+    /usr/sbin/lsmod                                          [ <b class=HIG>OK</b> ]
+    /usr/sbin/modinfo                                        [ <b class=HIG>OK</b> ]
+    /usr/sbin/modprobe                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/nologin                                        [ <b class=HIG>OK</b> ]
+    /usr/sbin/pwck                                           [ <b class=HIG>OK</b> ]
+    /usr/sbin/rmmod                                          [ <b class=HIG>OK</b> ]
+    /usr/sbin/route                                          [ <b class=HIG>OK</b> ]
+    /usr/sbin/rsyslogd                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/runlevel                                       [ <b class=HIG>OK</b> ]
+    /usr/sbin/sshd                                           [ <b class=HIG>OK</b> ]
+    /usr/sbin/sulogin                                        [ <b class=HIG>OK</b> ]
+    /usr/sbin/sysctl                                         [ <b class=HIG>OK</b> ]
+    /usr/sbin/useradd                                        [ <b class=HIG>OK</b> ]
+    /usr/sbin/userdel                                        [ <b class=HIG>OK</b> ]
+    /usr/sbin/usermod                                        [ <b class=HIG>OK</b> ]
+    /usr/sbin/vipw                                           [ <b class=HIG>OK</b> ]
+    /usr/sbin/unhide                                         [ <b class=HIG>OK</b> ]
+    /usr/sbin/unhide-linux                                   [ <b class=HIG>OK</b> ]
+    /usr/sbin/unhide-posix                                   [ <b class=HIG>OK</b> ]
+    /usr/sbin/unhide-tcp                                     [ <b class=HIG>OK</b> ]
+    /usr/lib/systemd/systemd                                 [ <b class=HIG>OK</b> ]
+
+<b class=HIY>Checking for rootkits...</b>
+
+  Performing check of known rootkit files and directories
+    55808 Trojan - Variant A                                 [ <b class=HIG>Not found</b> ]
+    ADM Worm                                                 [ <b class=HIG>Not found</b> ]
+    AjaKit Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Adore Rootkit                                            [ <b class=HIG>Not found</b> ]
+    aPa Kit                                                  [ <b class=HIG>Not found</b> ]
+    Apache Worm                                              [ <b class=HIG>Not found</b> ]
+    Ambient (ark) Rootkit                                    [ <b class=HIG>Not found</b> ]
+    Balaur Rootkit                                           [ <b class=HIG>Not found</b> ]
+    BeastKit Rootkit                                         [ <b class=HIG>Not found</b> ]
+    beX2 Rootkit                                             [ <b class=HIG>Not found</b> ]
+    BOBKit Rootkit                                           [ <b class=HIG>Not found</b> ]
+    cb Rootkit                                               [ <b class=HIG>Not found</b> ]
+    CiNIK Worm (Slapper.B variant)                           [ <b class=HIG>Not found</b> ]
+    Danny-Boy's Abuse Kit                                    [ <b class=HIG>Not found</b> ]
+    Devil RootKit                                            [ <b class=HIG>Not found</b> ]
+    Diamorphine LKM                                          [ <b class=HIG>Not found</b> ]
+    Dica-Kit Rootkit                                         [ <b class=HIG>Not found</b> ]
+    Dreams Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Duarawkz Rootkit                                         [ <b class=HIG>Not found</b> ]
+    Ebury backdoor                                           [ <b class=HIG>Not found</b> ]
+    Enye LKM                                                 [ <b class=HIG>Not found</b> ]
+    Flea Linux Rootkit                                       [ <b class=HIG>Not found</b> ]
+    Fu Rootkit                                               [ <b class=HIG>Not found</b> ]
+    Fuck`it Rootkit                                          [ <b class=HIG>Not found</b> ]
+    GasKit Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Heroin LKM                                               [ <b class=HIG>Not found</b> ]
+    HjC Kit                                                  [ <b class=HIG>Not found</b> ]
+    ignoKit Rootkit                                          [ <b class=HIG>Not found</b> ]
+    IntoXonia-NG Rootkit                                     [ <b class=HIG>Not found</b> ]
+    Irix Rootkit                                             [ <b class=HIG>Not found</b> ]
+    Jynx Rootkit                                             [ <b class=HIG>Not found</b> ]
+    Jynx2 Rootkit                                            [ <b class=HIG>Not found</b> ]
+    KBeast Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Kitko Rootkit                                            [ <b class=HIG>Not found</b> ]
+    Knark Rootkit                                            [ <b class=HIG>Not found</b> ]
+    ld-linuxv.so Rootkit                                     [ <b class=HIG>Not found</b> ]
+    Li0n Worm                                                [ <b class=HIG>Not found</b> ]
+    Lockit / LJK2 Rootkit                                    [ <b class=HIG>Not found</b> ]
+    Mokes backdoor                                           [ <b class=HIG>Not found</b> ]
+    Mood-NT Rootkit                                          [ <b class=HIG>Not found</b> ]
+    MRK Rootkit                                              [ <b class=HIG>Not found</b> ]
+    Ni0 Rootkit                                              [ <b class=HIG>Not found</b> ]
+    Ohhara Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Optic Kit (Tux) Worm                                     [ <b class=HIG>Not found</b> ]
+    Oz Rootkit                                               [ <b class=HIG>Not found</b> ]
+    Phalanx Rootkit                                          [ <b class=HIG>Not found</b> ]
+    Phalanx2 Rootkit                                         [ <b class=HIG>Not found</b> ]
+    Phalanx2 Rootkit (extended tests)                        [ <b class=HIG>Not found</b> ]
+    Portacelo Rootkit                                        [ <b class=HIG>Not found</b> ]
+    R3dstorm Toolkit                                         [ <b class=HIG>Not found</b> ]
+    RH-Sharpe's Rootkit                                      [ <b class=HIG>Not found</b> ]
+    RSHA's Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Scalper Worm                                             [ <b class=HIG>Not found</b> ]
+    Sebek LKM                                                [ <b class=HIG>Not found</b> ]
+    Shutdown Rootkit                                         [ <b class=HIG>Not found</b> ]
+    SHV4 Rootkit                                             [ <b class=HIG>Not found</b> ]
+    SHV5 Rootkit                                             [ <b class=HIG>Not found</b> ]
+    Sin Rootkit                                              [ <b class=HIG>Not found</b> ]
+    Slapper Worm                                             [ <b class=HIG>Not found</b> ]
+    Sneakin Rootkit                                          [ <b class=HIG>Not found</b> ]
+    'Spanish' Rootkit                                        [ <b class=HIG>Not found</b> ]
+    Suckit Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Superkit Rootkit                                         [ <b class=HIG>Not found</b> ]
+    TBD (Telnet BackDoor)                                    [ <b class=HIG>Not found</b> ]
+    TeLeKiT Rootkit                                          [ <b class=HIG>Not found</b> ]
+    T0rn Rootkit                                             [ <b class=HIG>Not found</b> ]
+    trNkit Rootkit                                           [ <b class=HIG>Not found</b> ]
+    Trojanit Kit                                             [ <b class=HIG>Not found</b> ]
+    Tuxtendo Rootkit                                         [ <b class=HIG>Not found</b> ]
+    URK Rootkit                                              [ <b class=HIG>Not found</b> ]
+    Vampire Rootkit                                          [ <b class=HIG>Not found</b> ]
+    VcKit Rootkit                                            [ <b class=HIG>Not found</b> ]
+    Volc Rootkit                                             [ <b class=HIG>Not found</b> ]
+    Xzibit Rootkit                                           [ <b class=HIG>Not found</b> ]
+    zaRwT.KiT Rootkit                                        [ <b class=HIG>Not found</b> ]
+    ZK Rootkit                                               [ <b class=HIG>Not found</b> ]
+
+  Performing additional rootkit checks
+    Suckit Rootkit additional checks                         [ <b class=HIG>OK</b> ]
+    Checking for possible rootkit files and directories      [ <b class=HIG>None found</b> ]
+    Checking for possible rootkit strings                    [ <b class=HIG>None found</b> ]
+
+  Performing malware checks
+    Checking running processes for suspicious files          [ <b class=HIG>None found</b> ]
+    Checking for login backdoors                             [ <b class=HIG>None found</b> ]
+    Checking for sniffer log files                           [ <b class=HIG>None found</b> ]
+    Checking for suspicious directories                      [ <b class=HIG>None found</b> ]
+    Checking for suspicious (large) shared memory segments   [ <b class=HIG>None found</b> ]
+    Checking for Apache backdoor                             [ <b class=HIG>Not found</b> ]
+
+  Performing Linux specific checks
+    Checking loaded kernel modules                           [ <b class=HIG>OK</b> ]
+    Checking kernel module names                             [ <b class=HIG>OK</b> ]
+
+<b class=HIY>Checking the network...</b>
+
+  Performing checks on the network ports
+    Checking for backdoor ports                              [ <b class=HIG>None found</b> ]
+
+  Performing checks on the network interfaces
+    Checking for promiscuous interfaces                      [ <b class=HIG>None found</b> ]
+
+<b class=HIY>Checking the local host...</b>
+
+  Performing system boot checks
+    Checking for local host name                             [ <b class=HIG>Found</b> ]
+    Checking for system startup files                        [ <b class=HIG>Found</b> ]
+    Checking system startup files for malware                [ <b class=HIG>None found</b> ]
+
+  Performing group and account checks
+    Checking for passwd file                                 [ <b class=HIG>Found</b> ]
+    Checking for root equivalent (UID 0) accounts            [ <b class=HIG>None found</b> ]
+    Checking for passwordless accounts                       [ <b class=HIG>None found</b> ]
+    Checking for passwd file changes                         [ <b class=HIG>None found</b> ]
+    Checking for group file changes                          [ <b class=HIG>None found</b> ]
+    Checking root account shell history files                [ <b class=HIG>OK</b> ]
+
+  Performing system configuration file checks
+    Checking for an SSH configuration file                   [ <b class=HIG>Found</b> ]
+    Checking if SSH root access is allowed                   [ <b class=HIR>Warning</b> ]
+    Checking if SSH protocol v1 is allowed                   [ <b class=HIG>Not set</b> ]
+    Checking for other suspicious configuration settings     [ <b class=HIG>None found</b> ]
+    Checking for a running system logging daemon             [ <b class=HIG>Found</b> ]
+    Checking for a system logging configuration file         [ <b class=HIG>Found</b> ]
+    Checking if syslog remote logging is allowed             [ <b class=HIG>Not allowed</b> ]
+
+  Performing filesystem checks
+    Checking /dev for suspicious file types                  [ <b class=HIG>None found</b> ]
+    Checking for hidden files and directories                [ <b class=HIG>None found</b> ]
+
+
+System checks summary
+=====================
+
+File properties checks...
+    Files checked: 142
+    Suspect files: 0
+
+Rootkit checks...
+    Rootkits checked : 495
+    Possible rootkits: 0
+
+Applications checks...
+    All checks skipped
+
+The system checks took: 45 seconds
+
+All results have been written to the log file: /var/log/rkhunter.log
+
+One or more warnings have been found while checking the system.
+Please check the log file (/var/log/rkhunter.log)
+
+</pre>
+</body>
+</html>

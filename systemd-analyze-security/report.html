@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+body {background-color: black;}
+pre {
+	font-weight: normal;
+	color: #bbb;
+}
+b {font-weight: normal}
+b.BOLD {color: #fff}
+b.ITA {font-style: italic}
+b.UND {text-decoration: underline}
+b.STR {text-decoration: line-through}
+b.UNDSTR {text-decoration: underline line-through}
+b.BLK {color: #000000}
+b.RED {color: #aa0000}
+b.GRN {color: #00aa00}
+b.YEL {color: #aa5500}
+b.BLU {color: #0000aa}
+b.MAG {color: #aa00aa}
+b.CYN {color: #00aaaa}
+b.WHI {color: #aaaaaa}
+b.HIK {color: #555555}
+b.HIR {color: #ff5555}
+b.HIG {color: #55ff55}
+b.HIY {color: #ffff55}
+b.HIB {color: #5555ff}
+b.HIM {color: #ff55ff}
+b.HIC {color: #55ffff}
+b.HIW {color: #ffffff}
+b.BBLK {background-color: #000000}
+b.BRED {background-color: #aa0000}
+b.BGRN {background-color: #00aa00}
+b.BYEL {background-color: #aa5500}
+b.BBLU {background-color: #0000aa}
+b.BMAG {background-color: #aa00aa}
+b.BCYN {background-color: #00aaaa}
+b.BWHI {background-color: #aaaaaa}
+</style>
+</head>
+<body>
+<pre>UNIT                                 EXPOSURE PREDICATE HAPPY
+cron.service                              9.6 <b class=HIR>UNSAFE   </b> :-{
+dbus.service                              9.6 <b class=HIR>UNSAFE   </b> :-{
+dm-event.service                          9.5 <b class=HIR>UNSAFE   </b> :-{
+emergency.service                         9.5 <b class=HIR>UNSAFE   </b> :-{
+exim4.service                             9.6 <b class=HIR>UNSAFE   </b> :-{
+getty@tty1.service                        9.6 <b class=HIR>UNSAFE   </b> :-{
+ifup@enp0s3.service                       9.5 <b class=HIR>UNSAFE   </b> :-{
+lvm2-lvmpolld.service                     9.5 <b class=HIR>UNSAFE   </b> :-{
+lynis.service                             9.6 <b class=HIR>UNSAFE   </b> :-{
+rc-local.service                          9.6 <b class=HIR>UNSAFE   </b> :-{
+rescue.service                            9.5 <b class=HIR>UNSAFE   </b> :-{
+rsyslog.service                           9.6 <b class=HIR>UNSAFE   </b> :-{
+ssh.service                               9.6 <b class=HIR>UNSAFE   </b> :-{
+systemd-ask-password-console.service      9.4 <b class=HIR>UNSAFE   </b> :-{
+systemd-ask-password-wall.service         9.4 <b class=HIR>UNSAFE   </b> :-{
+systemd-fsckd.service                     9.5 <b class=HIR>UNSAFE   </b> :-{
+systemd-initctl.service                   9.4 <b class=HIR>UNSAFE   </b> :-{
+systemd-journald.service                  4.3 <b class=HIG>OK       </b> :-)
+systemd-logind.service                    2.6 <b class=HIG>OK       </b> :-)
+systemd-networkd.service                  2.9 <b class=HIG>OK       </b> :-)
+systemd-timesyncd.service                 2.1 <b class=HIG>OK       </b> :-)
+systemd-udevd.service                     8.0 <b class="BOLD" style="color:#d7d75f;">EXPOSED  </b> :-(
+user@1000.service                         9.4 <b class=HIR>UNSAFE   </b> :-{
+</pre>
+</body>
+</html>

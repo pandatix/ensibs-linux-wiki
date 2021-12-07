@@ -1,197 +1,769 @@
-# WIKI SECU LINUX	
-Ce rapport présente certaines mesures de sécurité Linux Debian à appliquer, les mesures de sécurité sont divisées en différentes configurations : minimale, recommandée et renforcée.
-Toutes les sources sont disponibles en fin de rapport
+# Linux
 
-# Audit et analyse de la sécurité du système
+Nolan GLOUX
+Maxime MINGUELLA
+Lucas TESSON
 
-De nombreux outils sont disponibles afin d'évaluer le niveau de sécurité et de protection d'un système, ces outils analysent les applications et services installés puis en déduisent une liste d'améliorations possibles, et annoncent le niveau de maturité du système audité.
+Ce wiki contient une installation verbeuse et détaillée d'une VM Debian sous Virtual Box. Il devrait être possible de le dérouler pour obtenir les mêmes résultats annoncé au fur et à mesure.
 
-Sous Debian, les outils suivants peuvent être utilisés :
-1. Debsecan : apt-get install $(debsecan --suite NOM_SUITE --only-fixed --format packages) puis debsecan --suite $(lsb_release --codename --short) --only-fixed --format detail
-2. Lynis : apt update && apt install lynis. On lance l'audit via la commande lynis audit system. Le rapport est enregistré sous : /var/log/lynis-report.dat (Guide d'utilisation : https://opensource.com/article/20/5/linux-security-lynis)
+Le choix de la verbosité est fait pour qu'une personne qui découvre le sujet puisse comprendre les étapes et leurs implications.
 
+Il sera fait le choix d'appliquer au plus possibles les recommandations de l'ANSSI pour augmenter le niveau de sécurité du système.
 
-# Configuration minimale
-## Configuration de PAM
+## Glossaire
 
-PAM va fournir le service de gestion de comptes, c’est-à-dire permettre l’authentification de l’utilisateur, la création de sa session et éventuellement toute opération qui doit se dérouler lors de la tentative d’accès : création d’environnement, récupération de tickets ou de données, droits d’accès, changement de mot de passe, etc.
-Les fichiers de configuration des modules PAM se situent dans /etc/pam.d/
+Voir le [glossaire](docs/glossary.md) pour les termes techniques nécessitant une explication ou un rappel.
 
-- Il faut limiter le nombre d'applications utilisant PAM, pour savoir si une application a été écrite pour utiliser PAM on utilise la commande "ldd". Exemple : ldd /etc/sbin/sshd, le résultat contient bien "libpam.so".
+## Création de la VM sous Virtual Box
 
-- Authentication par un serice distant : on s'assure de que le protocole d'authentification utilisé par PAM soit sécurisé, on pourra par exemple implémenter le module "pam_krb5" pour utiliser le protocole Kerberos (https://www.eyrie.org/~eagle/software/pam-krb5/)
+Télécharger la [dernière image iso de Debian en mode netinst pour une architecture amd64](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso).
 
-- Exemples de modifications possibles avec les modules : bloquage de l'accès root à certains groupes/utilisateurs (/etc/pam.d/sudo), réglage de la complexité des mots de passe (/etc/pam.d/passwd)...
+```bash
+cd <my_workdir>
+wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso
+```
 
-- Il faut appliquer une solution de hashage de mdp jugée sûre : /etc/pam.d/common-password et /etc/login.defs
+Pour la création d'une VM, se référer à [la documentation](docs/new-vbox.md).
 
-## Sécurisation de SSH
+## Configuration et installation de Debian
 
-### Cryptographie
+Une fois la VM lancée, il va y avoir une capture de la souris et du clavier.
+En cas de nécessité de quitter la capture de la VM, il est écrit en bas à droite de la fenêtre la touche permettant cela. Le plus souvent, c'est le bouton `Ctrl` à droite du clavier.
 
-### Durcissement
+Nous allons désormais naviguer avec le clavier uniquement. Pour cela, lorsqu'il faudra cocher/décocher un élément d'une liste ou un sélecteur type switch (visible par un `[ ]` ou `[X]`), cela se fera via la barre `Espace`. Pour continuer à l'étape suivante ou cliquer sur un bouton, cela se fera via la touche `Entrée`. La navigation se fera via les touches directionnelles et la touche `Tab`.
 
-Le service sshd est très souvent exécuté par l'utilisateur root car il nécessite certains privilèges. Il convient donc d'en durcir le code en vue de retarder voire d'empêcher sa compromission.
+Se référer à [la documentation d'installation de Debian](docs/debian.md) pour installer la VM.
 
-La séparation de privilèges permet de limiter les impacts d’une faille en cherchant à respecter le
-principe de moindre privilège : le serveur va réduire ses droits au strict nécessaire. Ainsi, il peut être pertinent de set le `UsePrivilegeSeparation` de `sandbox` à `yes`.
+Une fois cela réalisé, on va arrêter la VM pour en faire un instantané (ou _snapshot_). Cela nous permettra de la relancer en l'état si jamais on le désire.
+Pour cela, on commence par exécuter `su` pour passer en administrateur, on tape le mot de passe du compte root, et on exécute `systemctl poweroff`, comme écrit dans la [documentation Debian au chapitre 8 section 1](https://www.debian.org/releases/buster/amd64/ch08s01.en.html). Cette élévation de privilège est nécessaire car l'action d'arrêter la machine est sensible (dans le sens où il ne faut pas que n'importe qui puisse décider d'arrêter selon sa propre volonté la machine).
 
-#### Paramètres de sécurité
+Pour faire un instantané, voir [la documentation](docs/snapshot-vbox.md).
 
-##### L'utilisation X11Forwarding
+## Audit de l'état du système avant la mise à jour
 
-Le retour SSH sur le client peut être davantage exposé à une attaque lorsque le trafic X11 est transféré. Si la redirection du trafic X11 n'est pas nécessaire, désactivez-la :
+On commence avec [Debescan](docs/debescan.md), et on continuera sur [Lynis](docs/lynis.md).
 
-> X11Forwarding no
+## Mise à jour du système
 
-Pourquoi désactiver X11Forwarding est si important : le protocole X11 n'a jamais été conçu dans un souci de sécurité. Comme il ouvre un canal de retour vers le client, le serveur pourrait renvoyer des commandes malveillantes au client. Pour protéger les clients, désactivez X11Forwarding lorsqu'il n'est pas nécessaire.
+On commence par mettre à jour le système selon [la documentation](docs/update.md).
 
-##### Désactiver rhosts
+Cela ne prodigue aucune mise à jour, ce qui est compréhensible puisque le système est neuf.
 
-Bien qu'elle ne soit plus courante, la méthode rhosts était une méthode faible d'authentification des systèmes. Elle définit un moyen de faire confiance à un autre système simplement par son adresse IP. Par défaut, l'utilisation de rhosts est déjà désactivée. Assurez-vous de vérifier si elle l'est vraiment.
+On profite de cette étape pour effectuer un instantané de la VM.
 
-> IgnoreRhosts yes
+## Sécurisation de l'environnement
 
-#####  Vérification du nom d'hôte DNS
+La sécurisation de l'environnement se fera par plusieurs étapes et selon plusieurs guides.
+Il est choisit de procéder en deux temps majeurs :
+ 1. Augmentation à un score d'au moins 80 par Lynis
+ 2. Validation selon les ressources et en particulier les guides de l'ANSSI
 
-Par défaut, le serveur SSH peut vérifier si le client qui se connecte renvoie à la même combinaison de nom d'hôte et d'adresse IP. Utilisez l'option UseDNS pour effectuer cette vérification de base comme garantie supplémentaire.
+### Augmentation à une score d'au moins 80 par Lynis
 
-> UseDNS yes
+#### Mise en place d'un mot de passe BIOS
 
-Remarque : cette option peut ne pas fonctionner correctement dans toutes les situations. Elle peut entraîner un délai supplémentaire, car le démon attend un délai d'attente lors de la connexion au serveur DNS. N'utilisez cette option que si vous êtes sûr que votre DNS interne est correctement configuré.
+Se référer à [la documentation sur la mise en place d'un mdp BIOS](docs/mdp-bios.md).
 
-##### Désactiver les mots de passe vides
+#### Hardening
 
-Les comptes doivent être protégés et les utilisateurs doivent être responsables. Pour cette raison, l'utilisation de mots de passe vides ne doit pas être autorisée. Ceci peut être désactivé avec l'option PermitEmptyPasswords, qui est la valeur par défaut.
+On va corriger `HRDN-7230` qui correspond à `Hardening` > `Installed malware scanner`.
+Pour cela, Lynis nous suggère `rkhunter`, `chkrootkit` et `OSSEC`.
+Nous allons choisir d'utiliser ce premier car très connu en utilisant [la documentation](docs/rkhunter.md).
+Cela va avoir pour effet d'ajouter des compilateurs que nous allons supprimer grâce au script [del-compils.sh](scripts/del-compils.sh).
 
-> PermitEmptyPasswords no
+Cela va avoir pour effet de relever le score Lynis.
 
+#### Dossiers personnels
 
-##### Tentatives d'authentification maximales
+On va corriger `HOME-9304` (qui soit dit en passant n'est plus à jour pour cette référence donnée).
+Pour cela, on va s'assurer que seul les utilisateurs des dossiers dans `/home` ont accès à leurs dossiers. On va donc se connecter en tant que `tartiflette` et exécuter `chmod o-rx /home/tartiflette`.
 
-Pour se protéger contre les attaques par force brute sur le mot de passe d'un utilisateur, limitez le nombre de tentatives. Cela peut être fait avec le paramètre MaxAuthTries.
+On va pouvoir scripter cela pour effectuer la manipulation dans le cas où il y aurait plusieurs comptes utilisateurs via le script [fix-home-perms.sh](scripts/fix-home-perms.sh).
 
-> MaxAuthTries 3
+#### Cryptographie
 
-##### Déscativer l'authentication root
+On va tenter de corriger `CRYP-8004`.
+Pour cela, on va suivre la [procédure](docs/rngd.md).
+Il est à noter que dans tous les cas, puisque nous sommes sur un VM, cela ne va pas changer l'état de la détection.
+En effet, en observant le [test effectué par Lynis](https://github.com/CISOfy/lynis/blob/master/include/tests_crypto#L247), on observe que Lynis va chercher le fichier `/sys/class/misc/hw_random/rng_current`. Celui-ci n'existe pas car il n'existe aucun module physique et qu'on ne va pas chercher à forcer le système pour qu'il en trouve un.
 
-La meilleure pratique consiste à ne pas se connecter en tant qu'utilisateur root. Utilisez plutôt un compte utilisateur normal pour initier votre connexion, ainsi que sudo. Les connexions directes de l'utilisateur root peuvent entraîner une mauvaise comptabilisation des actions effectuées par ce compte utilisateur.
+Cette mesure ne pourra donc pas aboutir, mais nous pouvons désormais utiliser le service `rng-tools-debian` pour accéder à une génération de random qui possède une entropie que l'on a basiquement validé.
 
-> PermitRootLogin no
+#### SSH
 
-Les versions plus récentes d'OpenSSH supportent également la valeur `without-password`. Cette valeur fait référence à des méthodes telles que l'authentification par clé publique. Si votre installation est fournie avec cette valeur, il n'y a aucune raison de la modifier.
+Pour cela, on va suivre la [documentation sur la sécurisation SSH](docs/ssh.md).
 
+#### Installation des binaires divers
 
-##### SSH protocole
+Pour diverses raisons, nous allons installer les paquets suivants.
 
-Si vous utilisez un système plus ancien, la version 1 du protocole SSH est peut-être encore disponible. Cette version présente des faiblesses et ne devrait plus être utilisée. Depuis la version 7.0 d'OpenSSH, le protocole 1 est automatiquement désactivé lors de la compilation. Si votre version est plus ancienne que cela, appliquez la version du protocole :
+| Paquet              | Raison |
+|---------------------|---|
+| `apt-listbugs`      | lève des alertes lors de l'installation d'un paquet comprenant des bugs répertoriés |
+| `needrestart`       | lève des alertes lorsque le système a besoin de redémarrer |
+| `debsums`           | permet d'effectuer une vérification de la checksum des paquets téléchargés pour s'assurer qu'ils ne sont pas corrompus voir compromis |
+| `fail2ban`          | bannir les comptes utilisateurs qui possèdent trop d'erreurs de login |
+| `apt-show-versions` | averti en cas de patch de paquet |
 
-> Protocol 2
+```bash
+su
+apt install apt-listbugs needrestart debsums fail2ban apt-show-versions -y
+exit
+```
 
-##### Utilisation de AllowUsers et DenyUsers
+On configure `fail2ban` selon [la documentation](docs/fail2ban.md).
 
-Lorsque tous les utilisateurs ne doivent pas avoir accès au système, limitez le nombre de personnes qui peuvent effectivement se connecter. Une façon de procéder consiste à créer un groupe (par exemple, sshusers) et à ajouter des personnes à ce groupe. Ensuite, définissez l'option AllowGroups pour que seuls ces utilisateurs puissent se connecter.
+Cela va avoir pour effet de relever le score Lynis.
 
-D'autres possibilités consistent à n'autoriser que quelques utilisateurs avec l'option AllowUsers, ou à refuser spécifiquement des utilisateurs et des groupes avec les options DenyUsers ou DenyGroups. Il est généralement préférable d'établir une liste blanche des accès, en utilisant le principe du "refus par défaut". Donc, lorsque cela est possible, utilisez l'option AllowUsers ou AllowGroups.
+#### Installation de PAM (Pluggable Authentication Modules)
 
-Bon à savoir : SSH applique l'ordre suivant pour déterminer si une personne peut se connecter : DenyUsers, AllowUsers, DenyGroups, enfin AllowGroups.
+On va commencer par installer `libpam-tmpdir`.
 
-### Protocole et accès réseau
+```bash
+su
+apt install libpam-tmpdir -y
+exit
+```
 
+Les diverses configurations se feront par la suite
 
-## Gestion des mots de passe et comptes dédiés
+### Bilan Lynis
 
-Mot de passe root : doit répondre aux recommandations sur les mots de passe et doit être unique pour chaque machine
-Le compte root ne doit pas être utilisé pour toutes les actions d'administration : on utilisera différents comptes pour les différents usages nécessaires, cette séparation aide aussi à la tracabilité des actions.
-Les administrateurs doivent posséder leur propre compte utilisateur dédié afin de ne pas utiliser leurs comptes à privilèges quand il y n'en ont pas le besoin.
--> protocole de création de compte
+Avec l'ensemble de ces mesures, on dépasse le seuil Lynis de 80 en Hardening.
 
-## Limiter les services au minimum requis
+---
 
-Une bonne façon de protéger son système contre les vulnérabilités est de désactiver tous les services non nécessaires au fonctionnement visé du système.
-Désactiver un service temporairement : sudo systemctl stop [service]
-Supprimer un service : sudo rm /etc/systemd/system/[service]
+## Validation selon les ressource et en particulier les guides de l'ANSSI
 
-Liste non exhaustive des services pouvant être désactivés/supprimés car inutiles sur un serveur :
-1. (Serveur non NFS) Services RPC : portmap, rpc.statd, rpcbind...
-2. Service facilitant le partage des imprimantes, fichiers et autres : avahi 
-3. Système de fenêtrage qui gère l'écran, la souris et le clavier : xorg
-4. Services inetd : xinetd, openbsd-inetd
-5. Services réseaux peu communs : DCCP, SCTP, RDS, TIPC...
-6. etc...
+### Recommandations de configuration d'un système GNU/Linux - ANSSI v1.2
 
+Les guides de l'ANSSI étant construit de telle sorte que l'ordre importe, nous allons pouvoir chercher à appliquer chaque mesure une à une.
+Nous partirons du principe que les étapes de sécurisation diverses précédentes ont été réalisées en amont.
 
-## Protocoles de mise à jour
+On choisit d'interpréter le sigle "R" comme une règle plutôt qu'une recommendation pour appuyer le caractère nécessaire d'une grande majorité de celles-ci.
 
-Il est recommandé d’avoir une procédure de mise à jour de sécurité régulière et réactive pour le système et l'ensemble des packages installés.
-Téléchargement et installation des packages : apt-get update && apt-get upgrade
+#### R1 - Minimisation des services installés
 
-## Choix des mots de passe
+Pour minimiser les services installés, on va supprimer les paquets inutilisés et des fichiers que nous n'utiliserons pas, comme ceux liés à l'IPv6.
+On va se baser sur la [doc de ReduceDebian](https://wiki.debian.org/ReduceDebian), et scripter cela dans [r01.sh](scripts/anssi/r01.sh).
 
-Pour le choix des mots de passe, l'utilisation d'un générateur de mots de passe est recommandé, surtout pour les comptes à privilège.
-Sous Linux, l'outil Pwgen peut être utiliser pour générer des mots de passe. D'autres outils existent aussi en ligne.
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R1    | Appliqué |
 
-Paramètres de l'outil Pwgen : http://pwet.fr/man/linux/commandes/pwgen/
+#### R2 - Minimisation de la configuration
 
-# Configuration intermédiaire
+Cette règle rappelle des pricipes clés qui tiennent au simple fait qu'un service installé ne doit avoir accès qu'à ce dont il a réellement besoin, sans plus.
+La bonne pratique avec le temps est donc, lors de l'installation, la modification ou la suppression d'un service d'analyser les effets via :
+ - `systemctl list-units`
+ - `systemctl status     <service>`
+ - `systemctl disable    <service>`
+ - `systemctl stop       <service>`
+ - `systemctl start      <service>`
 
-## Gestion et Configuration d'un pare-feu
+Dans un état d'installation initial sans presque aucune modification, on se retrouve dans une situation d'applomb.
 
--> iptables/ufw?
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R2    | Appliqué |
 
-## Configuration sécurisée des services
+#### R3 - Principe de moindre privilège
 
-## Journalisation et archivage
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R3    |        |
 
-### 1) Syslog
+#### R4 - Utilisation des fonctionnalités de contrôle d'accès
 
-Appliquer une configuration sécurisée au serveur syslog, on suivra, par exemple, les recommandations de l'ANSSI à ce propos : https://www.ssi.gouv.fr/journalisation.
 
-Cloisonner le service syslog dans un environnement chroot : il faut bien penser à configurer syslogd pour qu'il bien les différents autres services qui pourraient être chrootés (on utilisera la commande suivante syslogd -a /chroot/SERVICE/dev/log)
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R4    |        |
 
-Utiliser une partition séparée du reste du système : le volume des journaux à traiter peut être difficile à évaluer en amont, il vaut donc mieux isoler les journaux du reste des volumes sur une partition dédiée afin d’éviter que le remplissage d’une partition ne puisse entraver la gestion des journaux ou qu'une saturation due aux journaux bloque le système.
+#### R5 - Principe de défense en profondeur
 
-### 2) Auditd
+Cette règle rappelle des principes clés :
+ - authentification nécessaire avant d'effectuer des opérations et notamment quand elles sont privilégiés
+ - journalisation centralisée d'évènements au niveau systèmes et services
+ - utilisation préférentielle de services qui implémentent des mécanismes de cloisonnement ou de séparation de privilèges
+ - utilisation de mécanismes de prévention d'exploitation
 
-auditd est un service de journalisation qui permet d’enregistrer des opérations système spécifiques, voire d’alerter un administrateur lorsque des opérations privilégiées non prévues ont lieu, le fonctionnement du service dépend entièrement de son fichier de configuration :
+L'OS Debian implémente par défaut l'ensemble de ces mécanismes au travers de sa gestion des comptes (et son `sudo`), les logs (`/var/logs` notamment), `chroot`...etc.
 
-![Exemple de configuration auditd](./images/auditd.png)
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R5    | Appliqué |
 
-### 3) Surveillance du système de fichiers : AIDE
+#### R6 - Cloisonnement des services réseau
 
-AIDE est un logiciel open source qui aide l'administrateur à controler l'évolution du système de fichiers un « instantané » de l'état du système (sans les fichieres temporaires), enregistre les fragmentations, les moments liés à des modifications et toute autre donnée concernant les fichiers définis par l'administrateur. Cet « instantané » est utilisé pour générer une base de données qui est enregistrée qui va servir de base de comparaison.
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R6    |        |
 
-Lorsque l'administrateur souhaite exécuter un test d'intégrité, l'administrateur place la base de données précédemment générée en un lieu accessible et commande AIDE afin de comparer la base de données avec l'état réel du système. Toute modification qui se serait produite sur l'ordinateur entre la création de l'instantané et le test sera détectée par AIDE et sera signalée à l'administrateur.
+#### R7 - Journalisation de l'activité des services
 
-Documentation de AIDE : https://aide.github.io/
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R7    |        |
 
-## Confinement des droits par sudo
+#### R8 - Mises à jour régulières
 
-sudo est un utilitaire installé lorsqu’il y a un besoin de déléguer des droits et privilèges à différents utilisateurs.
-Afin de pouvoir réaliser cela, sudo est un exécutable setuid root. Il est donc important de se préoccuper de sa sécurité.
+À défaut de proposer un mode réactif se basant sur des listes de diffusion ou des API comme [celle du NVD](https://nvd.nist.gov/general/News/New-NVD-CVE-CPE-API-and-SOAP-Retirement), nous allons utiliser un mécanisme de mise à jour automatisé.
+On part du principe pour cela que nous n'aurons pas de système extrêmement sensible qui pourrait souffrir de ces mises à jour, auquel cas celles-ci pourraient poser problème.
+On utilise le mécanisme d'_unattended update_, et on script cela dans [r08.sh](scripts/anssi/r08.sh).
 
-On peut créer un groupe dédié à l’usage de sudo doit être créé (/usr/bin/sudo). Seuls les utilisateurs membres de ce groupe pourront avoir le droit d’exécuter sudo.
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R8    | Appliqué |
 
-Inconvénient : cette modification peut être écrasée par les scripts d'installation lors des mises à jour.
+#### R9 - Configuration matérielle
 
-# Configuration renforcée
+Les règles/recommandations de la note technique liée à cela ne sont soit pas intéressantes dans le cadre de labo ou simplement impossibles sur une VM.
 
-## Configuration sécurisée du système
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R9    | Appliqué |
 
-## Blocage du chargement dynamique de module
+#### R10 - Architecture 32 et 64 bits
 
-## Suppression des programmes inutiles
+L'image Debian utilisée a pour architecture du x86-64.
+Cela peut se vérifier par l'exécution de la commande `uname -a`.
 
-## chroot systématique de tous les services
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R10   | Appliqué |
 
-## Ecriture de scripts d'audit spécialisés
+#### R11 - Directive de configuration de l'IOMMU
 
-# Sources
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R11   |        |
 
-https://www.debian.org/doc/manuals/securing-debian-manual/index.en.html
-https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
-https://www.debian.org/doc/manuals/securing-debian-manual/rpc.en.html
-https://tldp.org/HOWTO/Security-Quickstart-HOWTO/services.html
-https://www.cert.ssi.gouv.fr/
-http://pwet.fr/man/linux/commandes/pwgen/
-https://opensource.com/article/20/5/linux-security-lynis 
+#### R12 - Partitionnement type
+
+Dans le contexte d'un labo, nous avons fait le choix de ne faire qu'une unique partition chiffrée LVM.
+Il est rappelé que cela n'est pas la meilleure pratique puisque séparer les divers points de montage apporte plusieurs possibilités (et notamment de sécurité).
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R12   | Appliqué |
+
+#### R13 - Restrictions d'accès sur le dossier /boot
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R13   |        |
+
+#### R14 - Installation de paquets réduite au strict nécessaire
+
+Lors de l'application de la R1, on a déjà réduit au strict nécessaire les paquets en accord avec ReduceDebian.
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R14   | Appliqué |
+
+#### R15 - Choix des dépôts de paquets
+
+Lors de l'installation, on a utilisé le mirroir `deb.debian.org` et nous n'en avons rajouté aucun. Cela peut se vérifier en observant le contenu du fichier `/etc/apt/sources.list`.
+Il faudra garder à l'esprit à l'avenir qu'en cas d'ajout d'une source il faudra revenir sur cette règle/recommendation.
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R15   | Appliqué |
+
+#### R16 - Dépôts de paquets durcis
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R16   |        |
+
+#### R17 - Mot de passe du chargeur de démarrage
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R17   |        |
+
+#### R18 - Robustesse du mot de passe administrateur
+
+Le mot de passe administrateur a été généré via `pwgen -y 16`, puis sélectionné au hasard par l'administrateur, en accord avec les Recommendations de sécurité relatives aux mots de passe.
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R18   | Appliqué |
+
+#### R19 - Imputabilité des opérations d'administration
+
+On vient créer un compte pour un administrateur `admin`, pour ne pas avoir à utiliser le compte `root`.
+Ce compte devra posséder un mdp respectant les règles/recommandations émises par l'ANSSI, comme par exemple `aecha{s,u)e7taeP`.
+On n'oublie pas de l'ajouter au groupe sudo pour qu'il puisse accéder à des droits d'administration.
+
+```bash
+adduser admin
+usermod -aG sudo admin
+```
+
+Les actions d'`admin` lui seront désormais imputable.
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R19   | Appliqué |
+
+#### R20 - Installation d'éléments secrets ou de confiance
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R20   |        |
+
+#### R21 - Durcissement et surveillance des services soumis à des flux arbitraires
+
+L'ensemble des éléments que nous avons installé sur la machine ne sont pas soumis à des flux extérieurs arbitraires, à l'exception de SSH.
+Un travail de durcissement est documenté dans [ssh.md](docs/ssh.md).
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R21   | Appliqué |
+
+#### R22 - Paramétrage des sysctl réseau
+
+Dans le contexte de labo, la machine n'a pas vocation à effectuer du routage. Nous allons donc la configurer ainsi.
+De plus, nous n'utilisons pas IPv6, nous allons donc le désactiver.
+
+On script ces actions dans [r22.sh](scripts/anssi/r22.sh).
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R22   | Appliqué |
+
+#### R23 - Paramétrage des sysctl système
+
+On applique la configuration de base donnée. Il est à noter que dans le contexte d'expérimentation du labo, nous n'allons pas restreindre l'ajout de modules au travers d'une systctl.
+
+On script ces actions dans [r23.sh](scripts/anssi/r23.sh).
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R23   |        |
+
+#### R24 - Désactivation du chargement des modules noyau
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R24   |        |
+
+#### R25 - Configuration sysctl du module Yama
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R25   |        |
+
+#### R26 - Désactivation des comptes utilisateurs unitulisés
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R26   |        |
+
+#### R27 - Désactivation des comptes de services
+
+Dans le contexte du labo, il n'existe que 3 comptes au total :
+ - root
+ - admin
+ - tartiflette
+
+Il n'existe donc pas la problématique de comptes de services en l'état.
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R27   | Appliqué |
+
+#### R28 - Unicité et exclusivité des comptes de services
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R28   |        |
+
+#### R29 - Délais d'expiration de sessions utilisateurs
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R29   |        |
+
+#### R30 - Applications utilisant PAM
+
+La granularité de configuration de PAM ne permet pas d'assurer d'un niveau minimal de sécurité au contour bien définit.
+Toutefois on peut s'appuyer sur de nombreuses ressources en ligne (de Red Hat ou encore du MIT) pour en confectionner une de base permettant de restreindre un minimum les applications utilisant PAM.
+
+On script cela dans [r30.sh](scripts/anssi/r30.sh).
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R30   | Appliqué |
+
+#### R31 - Sécurisation des services réseau d'authentification PAM
+
+Dans le contexte du labo, il n'y a pas d'authentification se faisant au travers du réseau.
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R31   | N/A    |
+
+#### R32 - Protection des mots de passe stockés
+
+On va configurer PAM et Debian pour utiliser SHA512 comme primitive de hash avec un seul et une nombre de tours de 65536.
+
+On script cela dans [r32.sh](scripts/anssi/r32.sh).
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+| MIRE   | R32   |        |
+
+#### R33 - Sécurisation des accès aux bases utilisateurs distantes
+
+Dans le contexte du labo, il n'y a pas d'authentification se faisant au travers du réseau.
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R33   | N/A    |
+
+#### R34 - Séparation des comptes système et d'administrateur de l'annuaire
+
+Dans le contexte du labo, il n'y a pas d'authentification se faisant au travers du réseau.
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R34   | N/A    |
+
+#### R35 - Valeur de umask
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R35   |        |
+
+#### R36 - Droit d'accès aux fichier de contenu sensible
+
+De nombreux fichiers peuvent être connotés sensibles sur un environnement Linux.
+On délègue la charge à Lynis d'avoir surveillé cela, et étant donné que des mesures ont été prises pour sécuriser si besoin les fichiers, on assume qu'une majorité de ces fichiers les plus sensibles sont protégés.
+
+Bilan de la règle:
+| Niveau | Règle | État      |
+|--------|-------|-----------|
+|  IRE   | R36   | Apppliqué |
+
+#### R37 - Exécutables avec bits setuid et setgid
+
+On commence par dresser la liste des binaires qui possèdent un bit setuid ou setgid via la commande `find / -type f -perm /6000 -ls 2>/dev/null`.
+On vient dresser le tableau suivant pour prendre une décision sur les binaires.
+
+| Binaire                                       | Type | Commentaire | Action |
+|-----------------------------------------------|------|---|---|
+| `/usr/sbin/unix_chkpwd`                       | GUID | Utilisé dans le cas d'une vérification de mdp pour un binaire ne disposant pas des droits root | Suppression |
+| `/usr/bin/gpasswd`                            | SUID | Utilisé pour les authentifications de groupes | Suppression |
+| `/usr/bin/dotlockfile`                        | GUID | Utilisé pour gérer les fichiers protégés | Suppression |
+| `/usr/bin/crontab`                            | GUID | Utilisé dans les tâches cron | Suppression |
+| `/usr/bin/passwd`                             | SUID | Utilisé dans le cas où un utilisateur doit pouvoir changer de mdp | Conserver |
+| `/usr/bin/umount`                             | SUID | Utilisé pour démonter un volume | Suppression |
+| `/usr/bin/chage`                              | GUID | Utilisé pour changer les informations d'expiration d'un mdp | Suppression |
+| `/usr/bin/chfn`                               | SUID | Utilisé pour changer les informations et le nom d'un utilisateur | Suppression |
+| `/usr/bin/chsh`                               | SUID | Utilisé pour changer de shell | Suppression |
+| `/usr/bin/newgrp`                             | SUID | Utilisé pour créer un groupe | Suppression |
+| `/usr/bin/expiry`                             | GUID | Utilisé pour gérer les règles d'expiration de mdp | Suppression |
+| `/usr/bin/su`                                 | SUID | Utilisé pour exécuter des commandes en tant qu'un autre utilisateur | Suppression |
+| `/usr/bin/wall`                               | GUID | Utilisé pour envoyer un message à tous les utilisateurs | Suppression |
+| `/usr/bin/mount`                              | SUID | Utilisé pour monter un volume | Suppression |
+| `/usr/bin/write.ul`                           | GUID | Utilisé pour envoyer un message à un autre utilisateur | Suppression |
+| `/usr/lib/dbus-1.0/dbus-daemon-launch-helper` | SUID | Utilisé dans le contexte de DBUS | Suppression |
+
+On script les actions à effectuer dans [r37.sh](scripts/anssi/r37.sh).
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+| MIRE   | R37   | Appliqué partiellement (exception pour `/usr/bin/passwd` car on laisse à l'utilisateur la possibilité de changer son mdp sans avoir à passer par l'administrateur) |
+
+#### R38 - Exécutables setuid root
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R38   |        |
+
+#### R39 - Répertoire temporaires dédiés aux comptes
+
+Pour que chaque compte utilisateur possède un répertoire temporaire qui lui soit propre, on utilise une règle PAM comme décrite dans [cet article](https://debathena.mit.edu/pam_mktemp/).
+On script cela dans [r39.sh](scripts/anssi/r39.sh).
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R39   | Appliqué |
+
+#### R40 - Sticky bit et droits d'accès en écriture
+
+Cette règle/recommendation nous fait armer le sticky-bit de l'ensemble des dossiers accessibles en écriture à tous sur le système.
+On script cela dans [r40.sh](scripts/anssi/r40.sh).
+
+Il est à noter que le cas où un fichier serait modifiable par tout le monde n'est pas traité car n'est lui-même pas très explicité.
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R40   | Appliqué |
+
+#### R41 - Sécurisation des accès pour les sockets et pipes nommées
+
+En listant les sockets et pipes via les commandes `ss -xp` et `ipcs`, on ne remarque aucune anomalie (les répertoires les protégeants possèdent des droits appropriés).
+Cela reste à surveiller dans le contexte où le labo viendrait à grossir.
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|  IRE   | R41   | Appliqué |
+
+#### R42 - Services et démons résidents en mémoire
+
+On établit une liste exhaustive de services qui ne sont pas nécessaires à notre cas d'usage, grâce aux commandes `systemctl list-units`, `ps aux` et `netstat -aelonptu` :
+ - dbus (démon `dbus.service` et socket `dbus.socket`)
+
+On décide de l'arrêter, et pour cela on script nos actions dans [r42.sh](scripts/anssi/r42.sh).
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R42   | Appliqué |
+
+#### R43 - Durcissement et configuration du service syslog
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R43   |        |
+
+#### R44 - Cloisonnement du service syslog par chroot
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R44   |        |
+
+#### R45 - Cloisonnement du service syslog par un conteneur
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R45   |        |
+
+#### R46 - Journaux d'activité de service
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R46   |        |
+
+#### R47 - Partition dédiée pour les journaux
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R47   |        |
+
+#### R48 - Configuration du service local de messagerie
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R48   |        |
+
+#### R49 - Alias de messagerie des comptes de service
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R49   |        |
+
+#### R50 - Journalisation de l'activité par auditd
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R50   |        |
+
+#### R51 - Scellement et intégrité des fichiers
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R51   |        |
+
+#### R52 - Protection de la base de données des scellés
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R52   |        |
+
+#### R53 - Restriction des accès des services déployés
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R53   |        |
+
+#### R54 - Durcissement des composants de virtualisation
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R54   |        |
+
+#### R55 - Cage chroot et pribilèges d'accès du service cloisonné
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R55   |        |
+
+#### R56 - Activation et utilisation de chroot par un service
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R56   |        |
+
+#### R57 - Groupe dédié à l'usage de sudo
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R57   |        |
+
+#### R58 - Directives de configuration sudo
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R58   |        |
+
+#### R59 - Authentification des utilisateurs exécutant sudo
+
+On vérifie que la configuration de sudo requiert un mot de passe, c'est-à-dire que `NOPASSWD` n'est pas présent dans le fichier. Il est à noter que cela peut requérir l'installation de sudo (`apt install sudo -y`).
+
+De plus, on vérifie que le fichier comprend bien les deux lignes suivantes dans le même état :
+```
+root    ALL=(ALL:ALL) ALL
+%sudo   ALL=(ALL:ALL) ALL
+```
+
+Bilan de la règle:
+| Niveau | Règle | État     |
+|--------|-------|----------|
+| MIRE   | R59   | Appliqué |
+
+#### R60 - Privilèges des utilisateurs cibles pour une commande sudo
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R60   |        |
+
+#### R61 - Limitation du nombre de commandes nécessitant l'option EXEC
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|   RE   | R61   |        |
+
+#### R62 - Du bon usage de la négation dans une spécification sudo
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R62   |        |
+
+#### R63 - Arguments explicites dans les spécifications sudo
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R63   |        |
+
+#### R64 - Du bon usage de sudoedit
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|  IRE   | R64   |        |
+
+#### R65 - Activation des profils de sécurité AppArmor
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R65   |        |
+
+#### R66 - Activation de SELinux avec la politique targeted
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R66   |        |
+
+#### R67 - Paramétrage des booléens SELinux
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R67   |        |
+
+#### R68 - Désinstallation des outils de débogage de politique SELinux
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R68   |        |
+
+#### R69 - Confinement des utilisateurs interactifs non-privilégiés
+
+Bilan de la règle:
+| Niveau | Règle | État   |
+|--------|-------|--------|
+|    E   | R69   |        |
+
+#### Bilan
+
+Toutes les mesures MIRE ont été mises en application à une restriction prêt sur R37.
+Les mesures IRE ne sont pas toutes mises en application, certaines sont encore à traiter et on des chances d'avoir déjà des solutions.
+Les mesures RE et E n'ont pas été traitées par manque de temps.
