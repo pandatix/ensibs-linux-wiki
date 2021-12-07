@@ -304,7 +304,7 @@ Bilan de la règle:
 
 #### R18 - Robustesse du mot de passe administrateur
 
-Le mot de passe administrateur a été généré via `pwgen -y 16`, puis sélectionné au hasard par l'administrateur, en accord avec les Recommendations de sécurité relatives aux mots de passe.
+Le mot de passe administrateur a été généré via `pwgen -y 16`, puis sélectionné au hasard par l'administrateur, en accord avec les recommandations de sécurité relatives aux mots de passe.
 
 Bilan de la règle:
 | Niveau | Règle | État     |
@@ -618,10 +618,12 @@ Bilan de la règle:
 
 #### R50 - Journalisation de l'activité par auditd
 
+Le fonctionnement du service auditd dépend entièrement du contenu de son fichier de configuration. Un exemple est fourni dans [exemple de configuration auditd](docs/auditd.md).
+
 Bilan de la règle:
-| Niveau | Règle | État   |
-|--------|-------|--------|
-|   RE   | R50   |        |
+| Niveau | Règle | État     |
+|--------|-------|----------|
+|   RE   | R50   | Appliqué |
 
 #### R51 - Scellement et intégrité des fichiers
 
